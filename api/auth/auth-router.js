@@ -52,18 +52,12 @@ router.post('/login', validatePost, checkUsernameExists, (req, res, next) => {
   // res.end('implement login, please!');
   const { username, password } = req.body;
 
-  Users.findBy({ username })
-    .then(([user]) => {
-      if(user && bcrypt.compareSync(password, user.password)) {
-        const token = generateToken(user);
-        res.status(200).json({ message: `welcome, ${user.username}`, token });
-      } else {
-        res.status(401).json({ message: 'invalid credentials' });
-      }
-    })
-    .catch(err => {
-      res.status(500).json({ message: 'error logging in' });
-    })
+  if(bcrypt.compareSync(password, req.user.password)) {
+    const token = generateToken(req.user);
+    res.status(200).json({ message: `welcome, ${username}`, token });
+  } else {
+    res.status(401).json({ message: 'invalid credentials' });
+  }
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -91,7 +85,7 @@ router.post('/login', validatePost, checkUsernameExists, (req, res, next) => {
 
 function generateToken(user) {
   const payload = {
-    subject: user.user_id,
+    subject: user.id,
     username: user.username,
     role_name: user.role_name
   }
