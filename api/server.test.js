@@ -49,7 +49,7 @@ describe('Get jokes', () => {
     const token = '';
     const result = await request(server)
       .get('/api/jokes')
-      .set({ authorization: `${token}`})
+      .set({ authorization: token })
     expect(result.status).toBe(200);
   })
   test('[GET] /api/jokes | returns 401 when missing token', async () => {

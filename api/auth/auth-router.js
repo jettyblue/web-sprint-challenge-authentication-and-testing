@@ -1,19 +1,19 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('./users-model');
+const Users = require('./users-model');
 const { BCRYPT_ROUNDS, JWT_SECRET } = require('../secrets');
 const { add, findBy } = require('./users-model');
-const { usernameExists, validatePost } = require('./auth-middleware');
+const { checkUsernameExists, validatePost } = require('./auth-middleware');
 
-router.post('/register', usernameExists, validatePost, (req, res, next) => {
+router.post('/register', checkUsernameExists, validatePost, (req, res, next) => {
   // res.end('implement register, please!');
   const user = req.body;
 
   const hash = bcrypt.hashSync(user.password, BCRYPT_ROUNDS);
   user.password = hash;
 
-  User.add(user)
+  Users.add(user)
     .then(newUser => {
       res.status(201).json(newUser);
     })
@@ -48,11 +48,11 @@ router.post('/register', usernameExists, validatePost, (req, res, next) => {
   */
 });
 
-router.post('/login', validatePost, usernameExists, (req, res, next) => {
+router.post('/login', validatePost, checkUsernameExists, (req, res, next) => {
   // res.end('implement login, please!');
   const { username, password } = req.body;
 
-  User.findBy({ username })
+  Users.findBy({ username })
     .then(([user]) => {
       if(user && bcrypt.compareSync(password, user.password)) {
         const token = generateToken(user);
