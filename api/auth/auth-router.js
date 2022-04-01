@@ -19,7 +19,7 @@ router.post('/register', usernameExists, validatePost, (req, res, next) => {
     })
     .catch(err => {
       res.status(500).json({ message: 'error adding new user' });
-    }
+    })
 
   /*
     IMPLEMENT
