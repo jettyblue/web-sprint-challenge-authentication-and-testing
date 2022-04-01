@@ -10,7 +10,7 @@ router.post('/register', checkUsernameExists, validatePost, (req, res, next) => 
   // res.end('implement register, please!');
   const user = req.body;
 
-  const hash = bcrypt.hashSync(user.password, BCRYPT_ROUNDS);
+  const hash = bcrypt.hashSync(user.password, 8);
   user.password = hash;
 
   Users.add(user)
